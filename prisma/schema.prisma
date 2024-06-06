@@ -1,0 +1,268 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+enum UserRole {
+  ADMIN
+  PEGAWAI
+}
+enum Status {
+  DONE
+  NOT_PAID
+  ON_PROGRESS
+  NOT_STARTED
+}
+model User {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email       String   @unique
+  name        String?
+  phoneNumber String?
+  job         String?
+  role        UserRole  @default(PEGAWAI)
+  password    String
+}
+
+model TempatSampah {
+  id        String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name      String
+  capacity  Float
+  lat       Float
+  long      Float 
+}
+
+model Sampah {
+  id  String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  date DateTime
+  kaca Float @default(0)
+  kertas Float @default(0)
+  plastik Float @default(0)
+  organik_sisa Float @default(0)
+  organik_kebun Float @default(0)
+  organik_cacah Float @default(0)
+  residu  Float @default(0)
+  trashbag  Float @default(0)
+  total Float 
+  
+  keterangan String? 
+}
+
+model pengangkutan {
+  id  String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  date DateTime
+  bulan String
+  pekan String
+  status String
+  operator String
+  jam String
+  hitam Int @default(0)
+  surat_jalan String
+  keterangan String?
+}
+
+model PihakKetiga{
+  id  String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  nama_organisasi String
+  sebagai String
+  start_kerjasama DateTime
+  periode_kerjasama Int //bulan
+  nama_contact_person String
+  nomer_contact_person String
+  status Int 
+  jatah_trashbag_bulanan Int
+  biaya_normal Float
+  harga_trashbag_tambahan_per_tb Float
+}
+
+model SampahResidu{
+  id  String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  date DateTime
+  sampah_kebun Float @default(0)
+  sampah_makanan Float @default(0)
+  kertas Float @default(0)
+  kaca Float @default(0)
+  logam Float @default(0)
+  plastik_PET Float @default(0)
+  kresek Float @default(0)
+  multilayer_plastic Float @default(0)
+  plastik_lain Float @default(0)
+  residu Float @default(0)
+}
+
+model Tagihan {
+  id  String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  start DateTime @default(now())
+  end DateTime @default(now())
+  trash_bag Int @default(0)
+  hari_angkut Int @default(0)
+  harga_normal Float @default(0)
+  trash_bag_tambahan Int @default(0)
+  harga_tambahan Float @default(0)
+  tagihan Float @default(0)
+  status String @default("NOT_STARTED") 
+  invoice String @default("INVALID")
+}
+
+model PenjualanSampah{
+  id  String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  date DateTime
+  name String
+  gelas_botol_plastik Float @default(0)
+  harga_gelas_botol_plastik Float @default(0)
+  kardus Float @default(0)
+  harga_kardus Float @default(0)
+  gelas_kaleng_alumunium Float @default(0)
+  harga_gelas_kaleng_alumunium Float @default(0)
+  bohlam Float @default(0)
+  harga_bohlam Float @default(0)
+  kabel_dan_tembaga Float @default(0)
+  harga_kabel_dan_tembaga Float @default(0)
+  koran_dan_kertas Float @default(0)
+  harga_koran_dan_kertas Float @default(0)
+  botol_kemasan Float @default(0)
+  harga_botol_kemasan Float @default(0)
+  barang_elektronik Float @default(0)
+  harga_barang_elektronik Float @default(0)
+  gelas_botol_kaca Float @default(0)
+  harga_gelas_botol_kaca Float @default(0)
+
+  barang_lain Float @default(0)
+  total_harga_barang_lain Float @default(0)
+  keterangan String
+  attachment String
+
+}
+
+model SedekahSampah{
+  id  String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  date DateTime
+  name String
+  gelas_botol_plastik Float @default(0)
+  harga_gelas_botol_plastik Float @default(0)
+  kardus Float @default(0)
+  harga_kardus Float @default(0)
+  gelas_kaleng_alumunium Float @default(0)
+  harga_gelas_kaleng_alumunium Float @default(0)
+  bohlam Float @default(0)
+  harga_bohlam Float @default(0)
+  kabel_dan_tembaga Float @default(0)
+  harga_kabel_dan_tembaga Float @default(0)
+  koran_dan_kertas Float @default(0)
+  harga_koran_dan_kertas Float @default(0)
+  botol_kemasan Float @default(0)
+  harga_botol_kemasan Float @default(0)
+  barang_elektronik Float @default(0)
+  harga_barang_elektronik Float @default(0)
+  gelas_botol_kaca Float @default(0)
+  harga_gelas_botol_kaca Float @default(0)
+
+  barang_lain Float @default(0)
+  total_harga_barang_lain Float @default(0)
+  keterangan String
+  attachment String
+
+  partisipan String
+
+}
+
+model KolaboratorQurban {
+  id                  String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  nama_lengkap        String
+  email               String    @unique
+  bentuk_kolab        String
+  nama_organisasi     String
+  nomor_wa            String
+  akun_instagram      String
+  jenis_kolab         String
+  alamat              String
+  alamat_drop_point   String
+
+  qurbans             Qurban[]  @relation("KolaboratorToQurban")
+
+  longitude Float
+  latitude Float
+}
+
+model Qurban {
+  id                      String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  date                    DateTime
+  tanggal_report          DateTime
+  ukuran_12               Int                @default(0)
+  ukuran_14               Int                @default(0)
+  ukuran_16               Int                @default(0)
+  ukuran_18               Int                @default(0)
+  ukuran_20               Int                @default(0)
+  tidak_ukuran_panjang    Int                @default(0)
+  rusak_panjang           Int                @default(0)
+  hanya_wadah_panjang     Int                @default(0)
+  hanya_tutup_panjang     Int                @default(0)
+  ukuran_650              Int                @default(0)
+  ukuran_700              Int                @default(0)
+  ukuran_750              Int                @default(0)
+  ukuran_800              Int                @default(0)
+  ukuran_900              Int                @default(0)
+  ukuran_1000             Int                @default(0)
+  ukuran_1500             Int                @default(0)
+  ukuran_2000             Int                @default(0)
+  ukuran_3000             Int                @default(0)
+  tidak_ukuran_ml         Int                @default(0)
+  rusak_ml                Int                @default(0)
+  hanya_wadah_ml          Int                @default(0)
+  hanya_tutup_ml          Int                @default(0)
+  dokumentasi             String
+  keterangan              String
+  keterangan_tambahan     String
+  status                  String            @default("WAITING")
+
+  email   String
+  kolaborator_qurban      KolaboratorQurban  @relation("KolaboratorToQurban", fields: [email], references: [email])
+}
+
+
+model LogActivity {
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  date DateTime
+  name String
+  activity String
+  table String
+  error String? 
+  status String
+  success Boolean
+}
+
+// model Sampah {
+//   id    Int      @id @default(autoincrement())
+//   date DateTime 
+//   tipe_sampah String
+//   berat_sampah Float @default(0)
+//   keterangan String
+//   created_by User @relation(fields: [createdById], references: [id])
+//   created_at DateTime @default(now())
+//   edited_by User? @relation(fields: [editedById], references: [id])
+//   edited_at DateTime?
+// }
+
+// model Pengangkutan {
+//   id    Int      @id @default(autoincrement())
+//   date DateTime 
+//   pengangkut String
+//   status String
+//   operator String
+//   jam DateTime
+//   tipe_sampah String
+//   surat_jalan String
+//   keterangan String
+//   created_by User @relation(fields: [createdById], references: [id])
+//   created_at DateTime @default(now())
+//   edited_by User? @relation(fields: [editedById], references: [id])
+//   edited_at DateTime?
+// }
